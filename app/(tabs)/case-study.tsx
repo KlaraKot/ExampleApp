@@ -5,16 +5,17 @@ import ParallaxScrollView from '@/components/parallax-scroll-view';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
 import { IconSymbol } from '@/components/ui/icon-symbol';
-import { Colors } from '@/constants/theme';
+import { Colors, Fonts } from '@/constants/theme';
 import { useColorScheme } from '@/hooks/use-color-scheme';
 
-const SYMPTOM_BUTTONS: { label: string; href: Href }[] = [
-  { label: 'Symptom A', href: '/symptom-a' },
-  { label: 'Symptom B', href: '/symptom-b' },
-  { label: 'Symptom C', href: '/symptom-c' },
+const CASE_STUDY_BUTTONS: { label: string; href: Href }[] = [
+  { label: 'Case Study A', href: '/case-study-a' },
+  { label: 'Case Study B', href: '/case-study-b' },
+  { label: 'Case Study C', href: '/case-study-c' },
+  { label: 'Case Study D', href: '/case-study-d' },
 ];
 
-export default function SymptomsScreen() {
+export default function CaseStudyScreen() {
   const colorScheme = useColorScheme() ?? 'light';
   const router = useRouter();
   const tint = Colors[colorScheme].tint;
@@ -22,25 +23,31 @@ export default function SymptomsScreen() {
 
   return (
     <ParallaxScrollView
-      headerBackgroundColor={{ light: '#A1CEDC', dark: '#1D3D47' }}
+      headerBackgroundColor={{ light: '#D0D0D0', dark: '#353636' }}
       headerImage={
         <IconSymbol
           size={280}
-          color="#5A8FA0"
-          name="stethoscope"
+          color="#808080"
+          name="book.fill"
           style={styles.headerImage}
         />
       }>
       <ThemedView style={styles.titleContainer}>
-        <ThemedText type="title">Symptoms</ThemedText>
+        <ThemedText
+          type="title"
+          style={{
+            fontFamily: Fonts.rounded,
+          }}>
+          Case study
+        </ThemedText>
       </ThemedView>
       <ThemedView style={styles.section}>
         <ThemedText>
-          Track and review the symptoms you are experiencing. Tap a symptom below to see details.
+          Browse case studies and detailed reports. Tap a case below to see details.
         </ThemedText>
       </ThemedView>
       <View style={styles.buttonsContainer}>
-        {SYMPTOM_BUTTONS.map(({ label, href }) => (
+        {CASE_STUDY_BUTTONS.map(({ label, href }) => (
           <TouchableOpacity
             key={label}
             onPress={() => router.push(href)}
@@ -62,13 +69,12 @@ export default function SymptomsScreen() {
 const styles = StyleSheet.create({
   headerImage: {
     bottom: -40,
-    right: -20,
+    left: -20,
     position: 'absolute',
     opacity: 0.6,
   },
   titleContainer: {
     flexDirection: 'row',
-    alignItems: 'center',
     gap: 8,
   },
   section: {
