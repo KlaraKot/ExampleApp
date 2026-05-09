@@ -1,6 +1,8 @@
+'use no memo';
+
 import { useFocusEffect } from '@react-navigation/native';
 import React, { memo, useCallback, useRef, useState } from 'react';
-import { Button, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { Button, StyleSheet, Text, View } from 'react-native';
 
 export default function CaseStudyAScreen() {
   const [mountKey, setMountKey] = useState(0);
@@ -11,147 +13,84 @@ export default function CaseStudyAScreen() {
     }, [])
   );
 
-  return <UserList key={mountKey} />;
+  return <Demo key={mountKey} />;
 }
 
-const UserList = () => {
+function Demo() {
   const [count, setCount] = useState(0);
+  const [useStable, setUseStable] = useState(false);
 
-  const parentRenderCount = useRef(0);
-  parentRenderCount.current += 1;
+  const stableHandler = useCallback(() => {
+    console.log('child tapped');
+  }, []);
+
+  const handler = useStable
+    ? stableHandler
+    : () => console.log('child tapped');
 
   return (
-    <ScrollView
-      style={{ flex: 1, backgroundColor: '#fff' }}
-      contentContainerStyle={{ padding: 20, paddingBottom: 40 }}>
-      <View style={styles.diagPanel}>
-        <Text style={styles.diagTitle}>Re-render diagnostics</Text>
-        <Row label="Parent renders" value={String(parentRenderCount.current)} />
-        <Row label="Counter value" value={String(count)} />
-        <Text style={styles.diagHint}>
-          Tap "tap!" — watch the ExpensiveList re-render counter grow even though the
-          component is wrapped in React.memo.
-        </Text>
-      </View>
+    <View style={styles.container}>
+      <Text style={styles.counter}>Parent count: {count}</Text>
 
-      <View>
-        <Button title="tap!" onPress={() => setCount(count + 1)} />
-        <ExpensiveList onItemPress={() => console.log('tap!')} />
-      </View>
-    </ScrollView>
+      <Button title="+1" onPress={() => setCount((c) => c + 1)} />
+
+      <View style={{ height: 12 }} />
+
+      <Button
+        title={useStable ? 'Switch to BAD (inline)' : 'Switch to GOOD (useCallback)'}
+        onPress={() => setUseStable((v) => !v)}
+      />
+
+      <Text style={styles.mode}>
+        Mode: <Text style={{ fontWeight: '700' }}>{useStable ? 'GOOD' : 'BAD'}</Text>
+      </Text>
+
+      <MemoChild onTap={handler} />
+    </View>
   );
-};
+}
 
-type ExpensiveListProps = {
-  onItemPress: () => void;
-};
-
-const ExpensiveList = memo(function ExpensiveList({ onItemPress }: ExpensiveListProps) {
+const MemoChild = memo(function MemoChild({ onTap }: { onTap: () => void }) {
   const renderCount = useRef(0);
   renderCount.current += 1;
 
-  // Simulate expensive rendering work to make the unnecessary re-render
-  // visible as actual lag, not just a number.
-  const start = Date.now();
-  while (Date.now() - start < 60) {
-    // block JS thread for 60ms each render
-  }
-
   return (
-    <View style={{ marginTop: 16 }}>
-      <View style={styles.warningBanner}>
-        <Text style={styles.warningTitle}>
-          ExpensiveList re-rendered! (count: {renderCount.current})
-        </Text>
-        <Text style={styles.warningBody}>
-          Despite being wrapped in React.memo, this component re-renders on every parent render
-          because <Text style={{ fontWeight: '700' }}>onItemPress</Text> is a new function reference
-          each time. Fix: wrap the handler with{' '}
-          <Text style={{ fontWeight: '700' }}>useCallback</Text>.
-        </Text>
-      </View>
-
-      <View style={styles.list}>
-        {[...Array(3)].map((_, i) => (
-          <Pressable
-            key={i}
-            onPress={onItemPress}
-            style={({ pressed }) => [
-              styles.listItem,
-              { backgroundColor: pressed ? '#f0f0f0' : '#fff' },
-              i === 3 && { borderBottomWidth: 0 },
-            ]}>
-            <Text>Item #{i}</Text>
-          </Pressable>
-        ))}
-      </View>
+    <View style={styles.child}>
+      <Text style={styles.childTitle}>MemoChild</Text>
+      <Text style={styles.childRenders}>renders: {renderCount.current}</Text>
     </View>
   );
 });
 
-function Row({ label, value }: { label: string; value: string }) {
-  return (
-    <View style={styles.row}>
-      <Text style={styles.rowLabel}>{label}</Text>
-      <Text style={styles.rowValue}>{value}</Text>
-    </View>
-  );
-}
-
 const styles = StyleSheet.create({
-  diagPanel: {
-    backgroundColor: '#f5f5f7',
-    borderRadius: 12,
-    padding: 14,
-    marginBottom: 16,
-    gap: 6,
+  container: {
+    flex: 1,
+    padding: 24,
+    gap: 12,
+    backgroundColor: '#fff',
   },
-  diagTitle: {
-    fontWeight: '700',
-    fontSize: 14,
-    marginBottom: 4,
-  },
-  diagHint: {
-    fontSize: 11,
-    color: '#666',
-    marginTop: 4,
-  },
-  row: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-  },
-  rowLabel: {
-    fontSize: 13,
-  },
-  rowValue: {
-    fontSize: 13,
+  counter: {
+    fontSize: 18,
     fontWeight: '600',
   },
-  warningBanner: {
-    backgroundColor: '#ffe5e5',
-    padding: 12,
-    borderRadius: 8,
-    marginBottom: 12,
+  mode: {
+    fontSize: 14,
+    marginTop: 8,
   },
-  warningTitle: {
-    color: '#b00020',
+  child: {
+    marginTop: 16,
+    backgroundColor: '#f0f0f0',
+    padding: 20,
+    borderRadius: 8,
+    alignItems: 'center',
+  },
+  childTitle: {
     fontWeight: '700',
-    marginBottom: 4,
+    fontSize: 16,
   },
-  warningBody: {
-    color: '#b00020',
-    fontSize: 12,
-  },
-  list: {
-    backgroundColor: '#fafafa',
-    borderRadius: 8,
-    borderWidth: 1,
-    borderColor: '#eee',
-  },
-  listItem: {
-    paddingVertical: 10,
-    paddingHorizontal: 12,
-    borderBottomWidth: 1,
-    borderBottomColor: '#eee',
+  childRenders: {
+    fontSize: 14,
+    marginTop: 6,
+    color: '#444',
   },
 });

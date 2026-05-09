@@ -6,7 +6,6 @@ import {
   Platform,
   ScrollView,
   StyleSheet,
-  Switch,
   Text,
   UIManager,
   View,
@@ -32,6 +31,7 @@ function randomColor() {
 }
 
 type Item = { id: string; text: string };
+type ColorMap = React.MutableRefObject<Record<string, string>>;
 
 export default function CaseStudyBScreen() {
   const [mountKey, setMountKey] = useState(0);
@@ -51,8 +51,25 @@ function ListDemo() {
     { id: 'b', text: 'Banana' },
     { id: 'c', text: 'Cherry' },
   ]);
-  const [useIndexKey, setUseIndexKey] = useState(true);
   const idRef = useRef(items.length);
+
+  // Stable color per item.id, shared by both lists so initial render is
+  // visually aligned. Both lists' ListItems read this map at mount.
+  const colorMapRef = useRef<Record<string, string>>(
+    Object.fromEntries(
+      [
+        { id: 'a' },
+        { id: 'b' },
+        { id: 'c' },
+      ].map((it) => [it.id, randomColor()])
+    )
+  );
+
+  const ensureColor = (id: string) => {
+    if (!colorMapRef.current[id]) {
+      colorMapRef.current[id] = randomColor();
+    }
+  };
 
   const animateNext = () =>
     LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
@@ -60,19 +77,17 @@ function ListDemo() {
   const addAtTop = () => {
     animateNext();
     idRef.current += 1;
-    setItems((cur) => [
-      { id: `id-${idRef.current}`, text: `New top #${idRef.current}` },
-      ...cur,
-    ]);
+    const id = `id-${idRef.current}`;
+    ensureColor(id);
+    setItems((cur) => [{ id, text: `New top #${idRef.current}` }, ...cur]);
   };
 
   const addAtBottom = () => {
     animateNext();
     idRef.current += 1;
-    setItems((cur) => [
-      ...cur,
-      { id: `id-${idRef.current}`, text: `New bottom #${idRef.current}` },
-    ]);
+    const id = `id-${idRef.current}`;
+    ensureColor(id);
+    setItems((cur) => [...cur, { id, text: `New bottom #${idRef.current}` }]);
   };
 
   const removeFirst = () => {
@@ -95,21 +110,16 @@ function ListDemo() {
   return (
     <ScrollView
       style={{ flex: 1, backgroundColor: '#fff' }}
-      contentContainerStyle={{ padding: 20, paddingBottom: 40 }}>
+      contentContainerStyle={{ padding: 16, paddingBottom: 40 }}>
       <View style={styles.diagPanel}>
-        <Text style={styles.diagTitle}>List key strategy</Text>
-        <View style={styles.switchRow}>
-          <Text style={styles.rowLabel}>
-            Use{' '}
-            <Text style={{ fontWeight: '700' }}>index</Text> as key (BAD)
-          </Text>
-          <Switch value={useIndexKey} onValueChange={setUseIndexKey} />
-        </View>
+        <Text style={styles.diagTitle}>List key strategy: side by side</Text>
         <Text style={styles.diagHint}>
-          Every list item picks a random color when it mounts. With{' '}
-          <Text style={{ fontWeight: '700' }}>index keys</Text>, colors stay glued to positions
-          while texts shift around — proof that React lost item identity. Switch the toggle off to
-          use stable id keys and watch colors travel with their items.
+          Both lists render the <Text style={styles.bold}>same items</Text>. The left column
+          uses <Text style={styles.codeInline}>key={'{index}'}</Text> (BAD), the right uses{' '}
+          <Text style={styles.codeInline}>key={'{item.id}'}</Text> (GOOD). Every item picks a
+          random color when its instance mounts. Click any control below — watch how colors
+          stay glued to <Text style={styles.bold}>positions</Text> on the BAD side and travel
+          with <Text style={styles.bold}>items</Text> on the GOOD side.
         </Text>
       </View>
 
@@ -120,35 +130,120 @@ function ListDemo() {
         <Button title="Shuffle" onPress={shuffle} />
       </View>
 
-      <View style={styles.list}>
-        {items.map((item, index) => (
-          <ListItem
-            key={useIndexKey ? index : item.id}
-            title={item.text}
-          />
-        ))}
+      <View style={styles.columns}>
+        <View style={styles.column}>
+          <View style={styles.columnHeaderBad}>
+            <Text style={styles.columnBadge}>BAD</Text>
+            <Text style={styles.columnTitle}>key={'{index}'}</Text>
+          </View>
+          <View style={styles.list}>
+            {items.map((item, index) => (
+              <ListItemBad
+                key={index}
+                id={item.id}
+                title={item.text}
+                colorMap={colorMapRef}
+              />
+            ))}
+          </View>
+        </View>
+
+        <View style={styles.column}>
+          <View style={styles.columnHeaderGood}>
+            <Text style={styles.columnBadge}>GOOD</Text>
+            <Text style={styles.columnTitle}>key={'{item.id}'}</Text>
+          </View>
+          <View style={styles.list}>
+            {items.map((item) => (
+              <ListItemGood
+                key={item.id}
+                id={item.id}
+                title={item.text}
+                colorMap={colorMapRef}
+              />
+            ))}
+          </View>
+        </View>
       </View>
 
       <View style={styles.codeBlock}>
-        <Text style={styles.codeText}>{`{items.map((item, index) => (
-  <ListItem key={index} title={item.text} />
-))}`}</Text>
+        <Text style={styles.codeText}>{`// Same items, two key strategies
+items.map((item, index) => (
+  <ListItemBad  key={index}   title={item.text} />  // BAD
+))
+items.map((item) => (
+  <ListItemGood key={item.id} title={item.text} />  // GOOD
+))`}</Text>
       </View>
     </ScrollView>
   );
 }
 
-function ListItem({ title }: { title: string }) {
-  const [color] = useState(randomColor);
+// Two distinct components so they show up as separate entries in the React
+// Profiler / fiber tree. Implementation is identical except for the console
+// tag — the difference between BAD and GOOD lives entirely in the parent's
+// `key={...}` prop, not in the child component itself.
+type ListItemProps = {
+  id: string;
+  title: string;
+  colorMap: ColorMap;
+};
+
+function ListItemBad({ id, title, colorMap }: ListItemProps) {
+  const [color] = useState(() => {
+    if (!colorMap.current[id]) {
+      colorMap.current[id] = randomColor();
+    }
+    return colorMap.current[id];
+  });
   const renderCount = useRef(0);
   renderCount.current += 1;
+
+  // useEffect(() => {
+  //   console.log(`[BAD] MOUNT   color=${color}`);
+  //   return () => {
+  //     console.log(`[BAD] UNMOUNT color=${color}`);
+  //   };
+  // }, [color]);
 
   return (
     <View style={styles.listItem}>
       <View style={[styles.dot, { backgroundColor: color }]} />
       <View style={{ flex: 1 }}>
-        <Text style={styles.listText}>{title}</Text>
-        <Text style={styles.listMeta}>renders: {renderCount.current}</Text>
+        <Text style={styles.listText} numberOfLines={1}>
+          {title}
+        </Text>
+        <Text style={styles.listMeta}>r:{renderCount.current}</Text>
+      </View>
+    </View>
+  );
+}
+
+function ListItemGood({ id, title, colorMap }: ListItemProps) {
+  const [color] = useState(() => {
+    if (!colorMap.current[id]) {
+      colorMap.current[id] = randomColor();
+    }
+    return colorMap.current[id];
+  });
+  const renderCount = useRef(0);
+  renderCount.current += 1;
+
+  // useEffect(() => {
+  //   console.log(`[GOOD] MOUNT   color=${color}`);
+  //   return () => {
+  //     console.log(`[GOOD] UNMOUNT color=${color}`);
+  //   };
+  // }, [color]);
+
+  return (
+    <View style={styles.listItem}>
+      <View style={[styles.dot, { backgroundColor: color }]} />
+      <View style={{ flex: 1 }}>
+        <Text style={styles.listText} numberOfLines={1}>
+          {title}
+        </Text>
+        <Text style={styles.listMeta}>r:{renderCount.current}</Text>
       </View>
     </View>
   );
@@ -159,7 +254,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#f5f5f7',
     borderRadius: 12,
     padding: 14,
-    marginBottom: 16,
+    marginBottom: 14,
     gap: 6,
   },
   diagTitle: {
@@ -170,53 +265,92 @@ const styles = StyleSheet.create({
   diagHint: {
     fontSize: 11,
     color: '#666',
-    marginTop: 4,
     lineHeight: 16,
   },
-  switchRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
+  bold: {
+    fontWeight: '700',
   },
-  rowLabel: {
-    fontSize: 13,
+  codeInline: {
+    fontFamily: Platform.select({ ios: 'Menlo', android: 'monospace', default: 'monospace' }),
+    fontSize: 11,
+    color: '#222',
   },
   controls: {
     flexDirection: 'row',
     flexWrap: 'wrap',
     gap: 8,
-    marginBottom: 16,
+    marginBottom: 14,
+  },
+  columns: {
+    flexDirection: 'row',
+    gap: 8,
+    marginBottom: 14,
+  },
+  column: {
+    flex: 1,
+  },
+  columnHeaderBad: {
+    backgroundColor: '#ffe5e5',
+    borderTopLeftRadius: 8,
+    borderTopRightRadius: 8,
+    padding: 8,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+  },
+  columnHeaderGood: {
+    backgroundColor: '#e1f4e6',
+    borderTopLeftRadius: 8,
+    borderTopRightRadius: 8,
+    padding: 8,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+  },
+  columnBadge: {
+    fontWeight: '800',
+    fontSize: 11,
+    paddingHorizontal: 6,
+    paddingVertical: 2,
+    color: '#fff',
+    backgroundColor: '#444',
+    borderRadius: 4,
+  },
+  columnTitle: {
+    fontFamily: Platform.select({ ios: 'Menlo', android: 'monospace', default: 'monospace' }),
+    fontSize: 11,
+    color: '#222',
   },
   list: {
     backgroundColor: '#fafafa',
-    borderRadius: 8,
+    borderBottomLeftRadius: 8,
+    borderBottomRightRadius: 8,
     borderWidth: 1,
     borderColor: '#eee',
     overflow: 'hidden',
-    marginBottom: 16,
   },
   listItem: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingVertical: 12,
-    paddingHorizontal: 14,
+    paddingVertical: 10,
+    paddingHorizontal: 10,
     borderBottomWidth: 1,
     borderBottomColor: '#eee',
-    gap: 12,
+    gap: 8,
   },
   dot: {
-    width: 16,
-    height: 16,
-    borderRadius: 8,
+    width: 14,
+    height: 14,
+    borderRadius: 7,
   },
   listText: {
-    fontSize: 15,
+    fontSize: 13,
     fontWeight: '500',
   },
   listMeta: {
-    fontSize: 11,
+    fontSize: 10,
     color: '#888',
-    marginTop: 2,
+    marginTop: 1,
   },
   codeBlock: {
     backgroundColor: '#1e1e1e',
@@ -226,6 +360,7 @@ const styles = StyleSheet.create({
   codeText: {
     color: '#dcdcdc',
     fontFamily: Platform.select({ ios: 'Menlo', android: 'monospace', default: 'monospace' }),
-    fontSize: 12,
+    fontSize: 11,
+    lineHeight: 16,
   },
 });
