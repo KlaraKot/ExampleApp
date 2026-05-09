@@ -8,7 +8,9 @@
     "scheme": "exampleapp",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
+    "jsEngine": "hermes",
     "ios": {
+      "jsEngine": "hermes",
       "supportsTablet": true,
       "bundleIdentifier": "com.klarakot.ExampleApp"
     },
