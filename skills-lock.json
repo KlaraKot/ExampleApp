@@ -1,35 +1,55 @@
 {
   "version": 1,
   "skills": {
-    "argent-create-flow": {
-      "source": "/Users/klarakot/.asdf/installs/nodejs/22.14.0/lib/node_modules/@swmansion/argent/skills",
+    "argent-android-emulator-setup": {
+      "source": "/Users/julia/.nvm/versions/node/v20.15.1/lib/node_modules/@swmansion/argent/skills",
       "sourceType": "local",
-      "computedHash": "8ef5dc1b2b2c09d0cb86ba772848dc24244d9400813cf70a68a799d62eddf59c"
+      "computedHash": "2e7edc2c85093d10dbb1e7f4b08db3ec64a85d42cdaac8838209cb0d7cbb6361"
+    },
+    "argent-create-flow": {
+      "source": "/Users/julia/.nvm/versions/node/v20.15.1/lib/node_modules/@swmansion/argent/skills",
+      "sourceType": "local",
+      "computedHash": "c17157ca41296c05b3750649550df102764f37423e437ffc9627c971766f5f6d"
+    },
+    "argent-device-interact": {
+      "source": "/Users/julia/.nvm/versions/node/v20.15.1/lib/node_modules/@swmansion/argent/skills",
+      "sourceType": "local",
+      "computedHash": "53064d866faf34cad5d1f9b28d3f4bfecd264443c58fa18655ea814f7905d9e9"
     },
     "argent-ios-profiler": {
       "source": "/Users/klarakot/.asdf/installs/nodejs/22.14.0/lib/node_modules/@swmansion/argent/skills",
       "sourceType": "local",
       "computedHash": "2a5e205a190f24b89a5781a439255ce5ac2b0ad1db62ff68d1aebda06706eb3b"
     },
-    "argent-metro-debugger": {
-      "source": "/Users/klarakot/.asdf/installs/nodejs/22.14.0/lib/node_modules/@swmansion/argent/skills",
+    "argent-ios-simulator-setup": {
+      "source": "/Users/julia/.nvm/versions/node/v20.15.1/lib/node_modules/@swmansion/argent/skills",
       "sourceType": "local",
-      "computedHash": "acc11a68c3db98b18556a121331060c0f7cc48ce535d1e73de6c925fa6452d7c"
+      "computedHash": "0b17edd8badb600e02e43ecacc07d2bb991e31d7ab2ca8cb5d02aef7d276c743"
+    },
+    "argent-metro-debugger": {
+      "source": "/Users/julia/.nvm/versions/node/v20.15.1/lib/node_modules/@swmansion/argent/skills",
+      "sourceType": "local",
+      "computedHash": "e5faa1950ddbe6bd90de9d358367b563f0ca4d22c117e3acade543d96161870d"
+    },
+    "argent-native-profiler": {
+      "source": "/Users/julia/.nvm/versions/node/v20.15.1/lib/node_modules/@swmansion/argent/skills",
+      "sourceType": "local",
+      "computedHash": "a6230e85a2a61112e3aaa593ec33fc63e4206593ef5cabaaa289d086945e6be7"
     },
     "argent-react-native-app-workflow": {
-      "source": "/Users/klarakot/.asdf/installs/nodejs/22.14.0/lib/node_modules/@swmansion/argent/skills",
+      "source": "/Users/julia/.nvm/versions/node/v20.15.1/lib/node_modules/@swmansion/argent/skills",
       "sourceType": "local",
-      "computedHash": "2c957274fded16fb8a2183e3a65c02fcb9559461a1a7905d27e0a77c38eda388"
+      "computedHash": "4635f2e67a590940a2e054b18fac0cf620456223fbeb23a60373db87f0cdfee7"
     },
     "argent-react-native-optimization": {
-      "source": "/Users/klarakot/.asdf/installs/nodejs/22.14.0/lib/node_modules/@swmansion/argent/skills",
+      "source": "/Users/julia/.nvm/versions/node/v20.15.1/lib/node_modules/@swmansion/argent/skills",
       "sourceType": "local",
-      "computedHash": "910409c869c5c4700b518934b174136136bb5ccd39bbb1e9fd69f243c6c2fc21"
+      "computedHash": "96aaa7bbb28df0b33ce4332ab1e866fb765c8f54015d4f0205a77d4f07c11162"
     },
     "argent-react-native-profiler": {
-      "source": "/Users/klarakot/.asdf/installs/nodejs/22.14.0/lib/node_modules/@swmansion/argent/skills",
+      "source": "/Users/julia/.nvm/versions/node/v20.15.1/lib/node_modules/@swmansion/argent/skills",
       "sourceType": "local",
-      "computedHash": "d63fb53e456219d8157532b462cb4d33e6993aefc09cba9577a16474fc023dc3"
+      "computedHash": "553945dae8b923dc37bff5e7251e615f5191dcf8c668663ddf4b10e18754f734"
     },
     "argent-simulator-interact": {
       "source": "/Users/klarakot/.asdf/installs/nodejs/22.14.0/lib/node_modules/@swmansion/argent/skills",
@@ -42,9 +62,9 @@
       "computedHash": "73f1f2f086b299b0678b5524c331d383f4b22e3ab442f166babf54e33e89ec53"
     },
     "argent-test-ui-flow": {
-      "source": "/Users/klarakot/.asdf/installs/nodejs/22.14.0/lib/node_modules/@swmansion/argent/skills",
+      "source": "/Users/julia/.nvm/versions/node/v20.15.1/lib/node_modules/@swmansion/argent/skills",
       "sourceType": "local",
-      "computedHash": "bef2df9a308b247b3e42d8f0b5347817dabeb650ecb4d8c0b79a8af04c78957b"
+      "computedHash": "5a18f567f25a25924dc3856c4ef4158671d373a575d6e7ca235fe2ffa0205c9c"
     }
   }
 }

@@ -13,6 +13,10 @@ const CASE_STUDY_BUTTONS: { label: string; href: Href }[] = [
   { label: 'Case Study B', href: '/case-study-b' },
   { label: 'Case Study C', href: '/case-study-c' },
   { label: 'Case Study D', href: '/case-study-d' },
+  { label: 'Case Study E', href: '/case-study-e' },
+  { label: 'Case Study F', href: '/case-study-f' },
+  { label: 'Case Study G', href: '/case-study-g' },
+  { label: 'Case Study H', href: '/case-study-h' },
 ];
 
 export default function CaseStudyScreen() {

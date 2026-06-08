@@ -12,6 +12,10 @@ const SYMPTOM_BUTTONS: { label: string; href: Href }[] = [
   { label: 'Symptom A', href: '/symptom-a' },
   { label: 'Symptom B', href: '/symptom-b' },
   { label: 'Symptom C', href: '/symptom-c' },
+  { label: 'Symptom E', href: '/symptom-e' },
+  { label: 'Symptom F', href: '/symptom-f' },
+  { label: 'Symptom G', href: '/symptom-g' },
+  { label: 'Symptom H', href: '/symptom-h' },
 ];
 
 export default function SymptomsScreen() {

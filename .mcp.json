@@ -7,7 +7,7 @@
         "mcp"
       ],
       "env": {
-        "ARGENT_MCP_LOG": "/Users/klarakot/.argent/mcp-calls.log"
+        "ARGENT_MCP_LOG": "/Users/julia/.argent/mcp-calls.log"
       }
     }
   }

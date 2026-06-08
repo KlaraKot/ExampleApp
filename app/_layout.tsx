@@ -20,10 +20,18 @@ export default function RootLayout() {
         <Stack.Screen name="symptom-a" options={{ title: 'Symptom A' }} />
         <Stack.Screen name="symptom-b" options={{ title: 'Symptom B' }} />
         <Stack.Screen name="symptom-c" options={{ title: 'Symptom C' }} />
+        <Stack.Screen name="symptom-e" options={{ title: 'Symptom E' }} />
+        <Stack.Screen name="symptom-f" options={{ title: 'Symptom F' }} />
+        <Stack.Screen name="symptom-g" options={{ title: 'Symptom G' }} />
+        <Stack.Screen name="symptom-h" options={{ title: 'Symptom H' }} />
         <Stack.Screen name="case-study-a" options={{ title: 'Case Study A' }} />
         <Stack.Screen name="case-study-b" options={{ title: 'Case Study B' }} />
         <Stack.Screen name="case-study-c" options={{ title: 'Case Study C' }} />
         <Stack.Screen name="case-study-d" options={{ title: 'Case Study D' }} />
+        <Stack.Screen name="case-study-e" options={{ title: 'Case Study E' }} />
+        <Stack.Screen name="case-study-f" options={{ title: 'Case Study F' }} />
+        <Stack.Screen name="case-study-g" options={{ title: 'Case Study G' }} />
+        <Stack.Screen name="case-study-h" options={{ title: 'Case Study H' }} />
       </Stack>
       <StatusBar style="auto" />
     </ThemeProvider>
